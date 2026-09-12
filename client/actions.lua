@@ -26,14 +26,6 @@ local function canUseBodyshop()
     return isOnDuty(job) and (Config.roles.bodyshopJobs[job.name] or Config.roles.bodyshopTypes[job.type])
 end
 
-local function ensureControl(vehicle)
-    if NetworkHasControlOfEntity(vehicle) then return true end
-    NetworkRequestControlOfEntity(vehicle)
-    local deadline = GetGameTimer() + 2000
-    while not NetworkHasControlOfEntity(vehicle) and GetGameTimer() < deadline do Wait(0) end
-    return NetworkHasControlOfEntity(vehicle)
-end
-
 local function servicePayload(action, vehicle)
     if action == 'paint' then
         local primary, secondary = GetVehicleColours(vehicle)
@@ -100,7 +92,8 @@ end
 
 RegisterNetEvent('qbmechanic:client:applyService', function(action, netId, payload)
     local vehicle = NetworkGetEntityFromNetworkId(netId)
-    if not vehicle or vehicle == 0 or not DoesEntityExist(vehicle) or not ensureControl(vehicle) then
+    if not vehicle or vehicle == 0 or not DoesEntityExist(vehicle)
+        or not QB.entities.requestControl(vehicle, 2000) then
         return notify('Could not obtain control of the vehicle. Try again.', 'error')
     end
 

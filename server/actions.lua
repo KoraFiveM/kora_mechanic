@@ -5,19 +5,11 @@ local function notify(src, message, kind)
     QB.notify.send(src, { title = 'Vehicle service', message = message, type = kind or 'error' })
 end
 
-local function getVehicle(netId)
-    if type(netId) ~= 'number' or netId <= 0 then return nil end
-    local vehicle = NetworkGetEntityFromNetworkId(netId)
-    if not vehicle or vehicle == 0 or not DoesEntityExist(vehicle) or GetEntityType(vehicle) ~= 2 then return nil end
-    return vehicle
-end
-
-local function inRange(src, vehicle)
-    local ped = GetPlayerPed(src)
-    if not ped or ped == 0 then return false end
-    local playerCoords, vehicleCoords = GetEntityCoords(ped), GetEntityCoords(vehicle)
-    local maxDistance = Config.interaction.distance
-    return #(playerCoords - vehicleCoords) <= maxDistance
+local function getVehicle(src, netId)
+    return QB.world.resolveNetworkEntity(src, netId, {
+        entityType = 'vehicle',
+        maxDistance = Config.interaction.distance,
+    })
 end
 
 local function nearGarage(vehicle)
@@ -90,8 +82,8 @@ local function makePermit(src, action, netId)
 end
 
 QB.callback.register('qbmechanic:permit', function(src, action, netId)
-    local vehicle = getVehicle(netId)
-    if not vehicle or not inRange(src, vehicle) then return false, 'Move closer to a valid vehicle.' end
+    local vehicle = getVehicle(src, netId)
+    if not vehicle then return false, 'Move closer to a valid vehicle.' end
     local allowed, reason = canPerform(src, action, vehicle)
     if not allowed then return false, reason end
     return true, makePermit(src, action, netId)
@@ -105,8 +97,8 @@ RegisterNetEvent('qbmechanic:server:completeService', function(permitId, payload
         return notify(src, 'That service authorisation expired. Start again.', 'error')
     end
 
-    local vehicle = getVehicle(permit.netId)
-    if not vehicle or not inRange(src, vehicle) then return notify(src, 'Move closer to the vehicle and start again.', 'error') end
+    local vehicle = getVehicle(src, permit.netId)
+    if not vehicle then return notify(src, 'Move closer to the vehicle and start again.', 'error') end
     local allowed, reason = canPerform(src, permit.action, vehicle)
     if not allowed then return notify(src, reason, 'error') end
     if not validPayload(permit.action, payload) then return notify(src, 'The requested vehicle modification is invalid.', 'error') end
