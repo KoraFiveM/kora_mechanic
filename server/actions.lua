@@ -94,7 +94,7 @@ RegisterNetEvent('qbmechanic:server:completeService', function(permitId, payload
     local permit = permits[permitId]
     permits[permitId] = nil -- permits are single-use even if validation fails
     if not permit or permit.src ~= src or permit.expires < GetGameTimer() then
-        return notify(src, 'That service authorisation expired. Start again.', 'error')
+        return notify(src, 'That service authorisation expired. start again.', 'error')
     end
 
     local vehicle = getVehicle(src, permit.netId)
