@@ -1,6 +1,6 @@
-# qbmechanic
+# kora_mechanic
 
-Vehicle service and damage gameplay for this qblib server.
+Vehicle service and damage gameplay for this kora_lib server.
 
 * `mechanic`, and any on-duty `automotive` job, can repair vehicles. The named
   `roadside` job is automotive but is deliberately limited to stabilisation:

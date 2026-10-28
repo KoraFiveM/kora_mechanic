@@ -1,4 +1,4 @@
--- qbmechanic configuration.  Roles are evaluated server-side for every
+-- kora_mechanic configuration.  Roles are evaluated server-side for every
 -- completed action; client-side target filters are only a convenience.
 
 Config = {}
@@ -88,5 +88,5 @@ Config.damage = {
     },
 }
 
--- Registers this resource-owned configuration with qblib without changing its public Config table.
+-- Registers this resource-owned configuration with kora_lib without changing its public Config table.
 if QB and QB.config and QB.config.adopt then Config = QB.config.adopt(Config) end
