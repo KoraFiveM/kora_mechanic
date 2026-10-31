@@ -1,5 +1,5 @@
 local function notify(message, kind)
-    QB.notify.send({ title = 'Vehicle service', message = message, type = kind or 'info' })
+    Kora.notify.send({ title = 'Vehicle service', message = message, type = kind or 'info' })
 end
 
 local function playerJob()
@@ -29,7 +29,7 @@ end
 local function servicePayload(action, vehicle)
     if action == 'paint' then
         local primary, secondary = GetVehicleColours(vehicle)
-        local response = QB.nui.openInputDialog({
+        local response = Kora.nui.openInputDialog({
             { id = 'primary', label = 'Primary paint index', type = 'number', default = primary, min = Config.cosmetics.paintColourMin, max = Config.cosmetics.paintColourMax, required = true },
             { id = 'secondary', label = 'Secondary paint index', type = 'number', default = secondary, min = Config.cosmetics.paintColourMin, max = Config.cosmetics.paintColourMax, required = true },
         }, 'Respray vehicle', 'GTA palette indices; both colours are applied after the service.')
@@ -39,7 +39,7 @@ local function servicePayload(action, vehicle)
     if action == 'bumpers' then
         SetVehicleModKit(vehicle, 0)
         local front, rear = GetVehicleMod(vehicle, 1), GetVehicleMod(vehicle, 2)
-        local response = QB.nui.openInputDialog({
+        local response = Kora.nui.openInputDialog({
             { id = 'front', label = 'Front bumper variation (-1 stock)', type = 'number', default = front, min = -1, max = Config.cosmetics.bumperModMax, required = true },
             { id = 'rear', label = 'Rear bumper variation (-1 stock)', type = 'number', default = rear, min = -1, max = Config.cosmetics.bumperModMax, required = true },
         }, 'Customise bumpers', 'Values are clamped to variations supported by this vehicle.')
@@ -69,10 +69,10 @@ local function beginService(action, vehicle)
     local netId = NetworkGetNetworkIdFromEntity(vehicle)
     if not netId or netId == 0 then return notify('This vehicle is not networked and cannot be serviced.', 'error') end
 
-    local allowed, permitOrReason = QB.callback.trigger('qbmechanic:permit', action, netId)
+    local allowed, permitOrReason = Kora.callback.trigger('qbmechanic:permit', action, netId)
     if not allowed then return notify(permitOrReason or 'Service could not be authorised.', 'error') end
 
-    local completed = QB.progressbar.start({
+    local completed = Kora.progressbar.start({
         label = labelFor(action), duration = durationFor(action), canCancel = true,
         scenario = { name = 'WORLD_HUMAN_VEHICLE_MECHANIC' }, disable = { move = true, combat = true },
     })
@@ -93,7 +93,7 @@ end
 RegisterNetEvent('qbmechanic:client:applyService', function(action, netId, payload)
     local vehicle = NetworkGetEntityFromNetworkId(netId)
     if not vehicle or vehicle == 0 or not DoesEntityExist(vehicle)
-        or not QB.entities.requestControl(vehicle, 2000) then
+        or not Kora.entities.requestControl(vehicle, 2000) then
         return notify('Could not obtain control of the vehicle. Try again.', 'error')
     end
 
