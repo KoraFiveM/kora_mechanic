@@ -12,13 +12,18 @@ local function getVehicle(src, netId)
     })
 end
 
-local function nearGarage(vehicle)
-    if not Config.fullRepair.requireGarage then return true end
+local function nearGarage(vehicle, ignoreRequireFlag)
+    if not ignoreRequireFlag and not Config.fullRepair.requireGarage then return true end
     local vehicleCoords = GetEntityCoords(vehicle)
     for _, coords in ipairs(Config.fullRepair.garages) do
         if #(vehicleCoords - coords) <= Config.fullRepair.garageRadius then return true end
     end
     return false
+end
+
+local function inShopZone(vehicle)
+    if not Config.interaction.requireShopZone then return true end
+    return nearGarage(vehicle, true)
 end
 
 local function roleFor(src)
@@ -47,6 +52,7 @@ local function canPerform(src, action, vehicle)
     end
     if action == 'paint' or action == 'bumpers' then
         if not isBodyshop then return false, 'Only bodyshop staff can change vehicle cosmetics.' end
+        if not inShopZone(vehicle) then return false, 'Cosmetic work must be done at a mechanic shop.' end
         return true
     end
     return false, 'Unknown vehicle service action.'
