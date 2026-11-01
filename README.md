@@ -8,7 +8,9 @@ Vehicle service and damage gameplay for this kora_lib server.
 * Full repairs are mechanic/automotive-only and must be carried out in a
   configured garage bay. Bodyshop roles cannot repair.
 * `bodyshop` (or a `bodyshop` job type) can respray vehicles and change front
-  and rear bumper variations, but sees no repair options.
+  and rear bumper variations, but sees no repair options. These options only
+  appear on-duty and, while `Config.interaction.requireShopZone` is true
+  (default), only for vehicles inside a configured garage bay.
 * Damage adds collision wear, low-health limp mode/stalls and configurable
   random tyre bursts. Optional distance wear is disabled by default so normal,
   collision-free driving does not reduce vehicle health. All tuning is in
