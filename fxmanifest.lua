@@ -6,6 +6,7 @@ use_experimental_fxv2_oal 'yes'
 name 'kora_mechanic'
 -- Keep the legacy resource name resolvable for exports['qbmechanic'] callers.
 provide 'qbmechanic'
+provide 'qb-mechanicjob'
 author 'qbcore2'
 version '1.0.0'
 description 'Job-gated vehicle repairs, roadside assistance, bodyshop cosmetics, and configurable vehicle wear.'
@@ -28,5 +29,6 @@ client_scripts {
 }
 
 server_scripts {
-    'server/actions.lua'
+    'server/actions.lua',
+    'server/props.lua'
 }
