@@ -93,3 +93,9 @@ Config.damage = {
 
 -- Registers this resource-owned configuration with kora_lib without changing its public Config table.
 if Kora and Kora.config and Kora.config.adopt then Config = Kora.config.adopt(Config) end
+
+Config.propsSave = {
+    distance = 8.0,       -- the caller must be within this range of a vehicle carrying the plate
+    maxBytes = 16384,
+    cooldown = 2000,      -- ms between accepted saves per player
+}
